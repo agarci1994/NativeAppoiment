@@ -12,7 +12,7 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import shortid from 'shortid'
 
-const Form = ({ quotes, setQuotes, setViewForm}) => {
+const Form = ({ quotes, setQuotes, setViewForm, saveAppoiment}) => {
   const [patient, setPatient] = useState("");
   const [owner, setOwner] = useState("");
   const [symptoms, setSymptoms] = useState("");
@@ -59,11 +59,13 @@ const Form = ({ quotes, setQuotes, setViewForm}) => {
       const quote = { patient, owner, phone, date, time, symptoms}
       quote.id = shortid.generate()
       const newQuotes = [...quotes, quote]
+      saveAppoiment(JSON.stringify(newQuotes))
       setQuotes(newQuotes)
       setViewForm(false)
   }
 
   const viewAlert = () => Alert.alert("Error", "Todos los campos son obligatorios", [{text: "OK"}])
+  
 
   return (
     <>

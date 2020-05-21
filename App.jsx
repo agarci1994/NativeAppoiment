@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,15 +11,42 @@ import {
 } from "react-native";
 import Quotes from "./components/Quotes";
 import Form from "./components/Form";
+import asyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const App = () => {
   const [viewForm, setViewForm] = useState(false);
   const [quotes, setQuotes] = useState([]);
 
-  const deletePatient = (id) =>
-    setQuotes((newQuotes) => newQuotes.filter((quotes) => quotes.id !== id));
+  const deletePatient = (id) => {
+
+    const appoimentFilter = newQuotes.filter((quotes) => quotes.id !== id));
+    setQuotes(appoimentFilter)
+    saveAppoiment(JSON.stringify(appoimentFilter))
+
+  };
   const changeViewForm = () => setViewForm(!viewForm);
   const closeKeyboard = () => Keyboard.dismiss();
+
+  useEffect(() => {
+    const getAppoiment = async () => {
+      try {
+        const appoimentStorage = await AsyncStorage.getItem("appoiment");
+        if (appoimentStorage) {
+          setQuotes(JSON.parse(appoimentStorage));
+        }
+      } catch (error) {}
+    };
+    getAppoiment();
+  }, []);
+
+  const saveAppoiment = async (appoimentJSON) => {
+    try {
+      await asyncStorage.setItem("appoiment", appoimentJSON);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => closeKeyboard()}>
@@ -43,6 +70,7 @@ const App = () => {
                 quotes={quotes}
                 setQuotes={setQuotes}
                 setViewForm={setViewForm}
+                saveAppoiment={saveAppoiment}
               />
             </>
           ) : (
